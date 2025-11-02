@@ -8,7 +8,7 @@ userInput.addEventListener("keypress", function (e) {
 });
 
 // Simpan status agar tahu apakah pengguna sedang memilih menu
-let isChoosing = true;
+let state = "main"
 
 function sendMessage() {
   const message = userInput.value.trim();
@@ -33,7 +33,7 @@ function addMessage(text, sender) {
 
 
 // === MENU UTAMA ===
-function showMenu() {
+function showMainMenu() {
   return `
     <b>Selamat datang di Chatbot Akademik FTI UNSAP 👋</b><br>
     Silakan pilih informasi yang ingin kamu ketahui:<br><br>
@@ -46,121 +46,172 @@ function showMenu() {
   `;
 }
 
+function showSkripsiMenu() {
+  return `
+    <b>📚 Sub-Menu Skripsi</b><br><br>
+    1️⃣ Syarat Skripsi<br>
+    2️⃣ Pendaftaran Skripsi<br>
+    3️⃣ Bimbingan Skripsi<br>
+    0️⃣ Kembali ke Menu Utama<br><br>
+    <i>Ketik angka (0–3) untuk memilih.</i>
+  `;
+}
+
+// === MENU KP ===
+function showKPMenu() {
+  return `
+    <b>🧑‍💼 Sub-Menu Kerja Praktek (KP)</b><br><br>
+    1️⃣ Syarat KP<br>
+    2️⃣ Pendaftaran KP<br>
+    3️⃣ Laporan KP<br>
+    0️⃣ Kembali ke Menu Utama<br><br>
+    <i>Ketik angka (0–3) untuk memilih.</i>
+  `;
+}
+
 
 function getBotReply(message) {
   // ==== CEK EXIT ====
   if (message === "exit" || message === "keluar" || message === "quit") {
-    isChoosing = true;
+    state = "main";
     clearChat();
-    return "Percakapan telah direset.\n\n" + showMenu();
+    setTimeout(() => addMessage(showMainMenu(), "bot"), 200);
+    return "Percakapan telah direset. Menampilkan kembali menu utama...";
+  }
+
+  // ==== KEMBALI ====
+  if (message === "0" || message === "back" || message === "kembali") {
+    state = "main";
+    return showMainMenu();
   }
 
   // ==== MODE PILIH MENU ====
-  if (isChoosing) {
-    switch (message) {
-      case "1":
-        isChoosing = false;
-        return handleSkripsi();
-      case "2":
-        isChoosing = false;
-        return handleKP();
-      case "3":
-        isChoosing = false;
-        return handleJadwal();
-      case "4":
-        isChoosing = false;
-        return handleKontak();
-      case "5":
-        isChoosing = false;
-        return handleLayanan();
-      default:
-        return "Pilihan tidak dikenali. Silakan pilih angka 1–5 atau ketik 'exit' untuk keluar.";
-    }
+ if (state === "main") {
+  if (message === "1") {
+    state = "skripsi";
+    return showSkripsiMenu();
+  } else if (message === "2") {
+    state = "kp";
+    return showKPMenu();
+  } else if (message === "3") {
+    state = "info";
+    return handleJadwal() + "\n\nKetik 0 untuk kembali ke menu utama.";
+  } else if (message === "4") {
+    state = "info";
+    return handleKontak() + "\n\nKetik 0 untuk kembali ke menu utama.";
+  } else if (message === "5") {
+    state = "info";
+    return handleLayanan() + "\n\nKetik 0 untuk kembali ke menu utama.";
   } else {
-    // Setelah menjawab, tampilkan menu lagi
-    isChoosing = true;
-    return showMenu();
+    return "Pilihan tidak valid. Silakan pilih 1–5.";
   }
 }
 
-// ==== RESPON SETIAP MENU ====
-function handleSkripsi() {
-  return `
-    <b>📚 Informasi Skripsi</b><br><br>
-    Berikut informasi umum mengenai Skripsi di Fakultas Teknologi Informasi UNSAP:<br><br>
-    • <b>Syarat Pengajuan:</b><br>
-    - Telah menempuh minimal <b>100 SKS</b>.<br>
-    - Sudah lulus mata kuliah <b>Seminar Proposal</b>.<br>
-    - Mendapat persetujuan dari Dosen Pembimbing Akademik.<br><br>
-    • <b>Prosedur:</b><br>
-    1. Mahasiswa mengajukan topik dan dosen pembimbing ke bagian akademik.<br>
-    2. Setelah disetujui, mahasiswa dapat mulai menyusun proposal.<br>
-    3. Proposal diseminarkan sebelum lanjut ke tahap penelitian utama.<br><br>
-    • <b>Catatan:</b> Semua dokumen pendaftaran dapat diakses melalui portal akademik FTI UNSAP.<br><br>
-    <i>Ketik apa saja untuk kembali ke menu utama atau 'exit' untuk keluar.</i>
-  `;
+ if (state === "skripsi") {
+    switch (message) {
+      case "1":
+        return `
+          <b>📘 Syarat Skripsi:</b><br>
+          • Minimal 100 SKS<br>
+          • Sudah mengambil Seminar Proposal<br>
+          • Disetujui oleh Dosen Pembimbing<br><br>
+          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
+        `;
+      case "2":
+        return `
+          <b>📝 Pendaftaran Skripsi:</b><br>
+          Dilakukan melalui form fakultas dengan rekomendasi dari dosen pembimbing.<br><br>
+          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
+        `;
+      case "3":
+        return `
+          <b>👨‍🏫 Bimbingan Skripsi:</b><br>
+          • Minimal 8 kali bimbingan.<br>
+          • Dicatat dalam kartu bimbingan skripsi.<br><br>
+          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
+        `;
+      case "0":
+        state = "main";
+        return showMainMenu();
+      default:
+        return showSkripsiMenu();
+    }
+  }
+
+  // ---- SUB-MENU KP ----
+  if (state === "kp") {
+    switch (message) {
+      case "1":
+        return `
+          <b>📋 Syarat KP:</b><br>
+          • Minimal 90 SKS.<br>
+          • Sudah lulus mata kuliah pendukung.<br><br>
+          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
+        `;
+      case "2":
+        return `
+          <b>🧾 Pendaftaran KP:</b><br>
+          Isi formulir KP di fakultas dan lampirkan proposal tempat KP.<br><br>
+          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
+        `;
+      case "3":
+        return `
+          <b>📅 Laporan KP:</b><br>
+          Laporan disusun sesuai pedoman dan dikumpulkan maksimal 2 minggu setelah KP selesai.<br><br>
+          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
+        `;
+      case "0":
+        state = "main";
+        return showMainMenu();
+      default:
+        return showKPMenu();
+    }
+  }
+
+if (state === "info") {
+    if (message === "0" || message === "back" || message === "kembali") {
+      state = "main";
+      return showMainMenu();
+    } else {
+      state = "main";
+      return `
+        <i>Kamu kembali ke menu utama.</i><br><br>
+        ${showMainMenu()}
+      `;
+    }
+  }
+
+  return showMainMenu();
 }
 
-
-function handleKP() {
-  return `
-    <b>🧑‍💼 Informasi Kerja Praktek (KP)</b><br><br>
-    Berikut panduan umum mengenai pelaksanaan Kerja Praktek:<br><br>
-    • <b>Syarat Pendaftaran:</b><br>
-    - Telah menempuh minimal <b>90 SKS</b>.<br>
-    - Sudah lulus mata kuliah dasar bidang konsentrasi.<br>
-    - Disarankan diambil pada semester 6 atau 7.<br><br>
-    • <b>Prosedur Pelaksanaan:</b><br>
-    1. Mahasiswa mencari instansi atau perusahaan mitra.<br>
-    2. Mengajukan surat pengantar KP ke fakultas.<br>
-    3. Melaksanakan KP minimal selama 1 bulan atau sesuai ketentuan.<br>
-    4. Menyusun laporan dan mengikuti seminar hasil KP.<br><br>
-    • <b>Catatan:</b> Template laporan KP tersedia di portal akademik FTI UNSAP.<br><br>
-    <i>Ketik apa saja untuk kembali ke menu utama atau 'exit' untuk keluar.</i>
-  `;
-}
-
-
+// === MENU LAINNYA ===
 function handleJadwal() {
   return `
-    <b>📅 Jadwal Akademik</b><br><br>
-    Berikut informasi umum terkait jadwal akademik FTI UNSAP:<br><br>
-    • Jadwal perkuliahan dapat dilihat melalui portal akademik UNSAP.<br>
-    • Setiap awal semester, fakultas mengeluarkan <b>kalender akademik</b> yang berisi:<br>
-      - Awal dan akhir perkuliahan.<br>
-      - Jadwal UTS dan UAS.<br>
-      - Periode KRS dan KHS.<br>
-      - Jadwal pengajuan KP dan Skripsi.<br><br>
-    Untuk informasi terkini, kunjungi situs resmi atau papan pengumuman fakultas.<br><br>
-    <i>Ketik apa saja untuk kembali ke menu utama atau 'exit' untuk keluar.</i>
+    <b>📅 Jadwal Akademik</b><br>
+    Jadwal kuliah dan kalender akademik dapat dilihat di portal FTI UNSAP.<br><br>
+    <i>Ketik apa saja untuk kembali ke menu utama.</i>
   `;
 }
-
 
 function handleKontak() {
   return `
-    <b>☎️ Kontak Fakultas Teknologi Informasi UNSAP</b><br><br>
-    Anda dapat menghubungi fakultas melalui beberapa saluran berikut:<br><br>
-    • <b>Telepon:</b> 0878-9278-91644<br>
-    • <b>Email:</b> fti@unsap.ac.id<br>
-    • <b>Alamat:</b> Jl. Pahlawan No. 1, Sumedang, Jawa Barat<br>
-    • <b>Jam Layanan:</b> Senin – Jumat, pukul 08.00 – 16.00 WIB<br><br>
-    Untuk pengajuan dokumen akademik atau administrasi, harap dilakukan pada jam kerja.<br><br>
-    <i>Ketik apa saja untuk kembali ke menu utama atau 'exit' untuk keluar.</i>
+    <b>☎️ Kontak Fakultas Teknologi Informasi UNSAP</b><br>
+    • Telepon: 0878-9278-91644<br>
+    • Email: fti@unsap.ac.id<br>
+    • Alamat: Jl. Pahlawan No. 1, Sumedang, Jawa Barat<br>
+    • Jam Layanan: Senin–Jumat, 08.00–16.00 WIB<br><br>
+    <i>Ketik apa saja untuk kembali ke menu utama.</i>
   `;
 }
 
-
 function handleLayanan() {
   return `
-    <b>🕐 Layanan Fakultas</b><br><br>
-    Fakultas Teknologi Informasi UNSAP menyediakan berbagai layanan untuk mahasiswa:<br><br>
-    • <b>Layanan Akademik:</b> Pengurusan KRS, KHS, dan transkrip nilai.<br>
-    • <b>Layanan KP & Skripsi:</b> Pendaftaran, surat pengantar, dan bimbingan dosen.<br>
-    • <b>Layanan Kemahasiswaan:</b> Organisasi, beasiswa, dan kegiatan kampus.<br>
-    • <b>Layanan IT Support:</b> Bantuan teknis untuk akun portal, email UNSAP, atau sistem e-learning.<br><br>
-    <b>Jam Operasional:</b> Senin – Jumat pukul 08.00 – 16.00 WIB.<br><br>
-    <i>Ketik apa saja untuk kembali ke menu utama atau 'exit' untuk keluar.</i>
+    <b>🕐 Layanan Fakultas</b><br>
+    • Layanan Akademik: KRS, KHS, Transkrip Nilai<br>
+    • Layanan KP & Skripsi<br>
+    • Layanan IT Support & Kemahasiswaan<br><br>
+    Jam Operasional: Senin–Jumat, 08.00–16.00 WIB<br><br>
+    <i>Ketik apa saja untuk kembali ke menu utama.</i>
   `;
 }
 
@@ -169,7 +220,7 @@ function clearChat() {
   chatBox.innerHTML = "";
 }
 
-// === TAMPILKAN MENU SAAT AWAL ===
+// === MULAI ===
 window.onload = () => {
-  addMessage(showMenu(), "bot");
+  addMessage(showMainMenu(), "bot");
 };
