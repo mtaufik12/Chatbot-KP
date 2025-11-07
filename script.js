@@ -1,226 +1,199 @@
-const chatBox = document.getElementById("chat-box");
-const userInput = document.getElementById("user-input");
-const sendBtn = document.getElementById("send-btn");
+const chatBody = document.getElementById("chatBody");
+const chatbotBox = document.getElementById("chatbotBox");
+const chatToggle = document.getElementById("chatToggle");
+const resetBtn = document.getElementById("resetBtn");
+const homeBtn = document.getElementById("homeBtn");
+const closeBtn = document.getElementById("closeBtn");
 
-sendBtn.addEventListener("click", sendMessage);
-userInput.addEventListener("keypress", function (e) {
-  if (e.key === "Enter") sendMessage();
+// === POPUP CONTROL ===
+chatToggle.addEventListener("click", () => {
+  chatbotBox.style.display = "flex";
+  chatToggle.style.display = "none";
 });
 
-// Simpan status agar tahu apakah pengguna sedang memilih menu
-let state = "main"
+closeBtn.addEventListener("click", () => {
+  chatbotBox.style.display = "none";
+  chatToggle.style.display = "block";
+});
 
-function sendMessage() {
-  const message = userInput.value.trim();
-  if (message === "") return;
+// === CHAT LOGIC ===
+function addMessage(text, sender = "bot") {
+  const msgDiv = document.createElement("div");
+  msgDiv.className = `message ${sender}`;
 
-  addMessage(message, "user");
-  userInput.value = "";
+  // Ambil waktu saat ini (format 24 jam)
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2, "0") + "." + now.getMinutes().toString().padStart(2, "0");
 
-  setTimeout(() => {
-    const reply = getBotReply(message.toLowerCase());
-    addMessage(reply, "bot");
-  }, 500);
-}
-
-function addMessage(text, sender) {
-  const msg = document.createElement("div");
-  msg.classList.add("chat-message", sender);
-  msg.innerHTML = text; // <== ubah dari textContent ke innerHTML
-  chatBox.appendChild(msg);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-
-// === MENU UTAMA ===
-function showMainMenu() {
-  return `
-    <b>Selamat datang di Chatbot Akademik FTI UNSAP 👋</b><br>
-    Silakan pilih informasi yang ingin kamu ketahui:<br><br>
-    <span class="menu-item">1️⃣ Informasi Skripsi</span><br>
-    <span class="menu-item">2️⃣ Informasi Kerja Praktek (KP)</span><br>
-    <span class="menu-item">3️⃣ Jadwal Akademik</span><br>
-    <span class="menu-item">4️⃣ Kontak Fakultas</span><br>
-    <span class="menu-item">5️⃣ Layanan Fakultas</span><br><br>
-    <i>Ketik angka (1-5) untuk memilih menu, atau ketik 'exit' untuk mengakhiri percakapan.</i>
-  `;
-}
-
-function showSkripsiMenu() {
-  return `
-    <b>📚 Sub-Menu Skripsi</b><br><br>
-    1️⃣ Syarat Skripsi<br>
-    2️⃣ Pendaftaran Skripsi<br>
-    3️⃣ Bimbingan Skripsi<br>
-    0️⃣ Kembali ke Menu Utama<br><br>
-    <i>Ketik angka (0–3) untuk memilih.</i>
-  `;
-}
-
-// === MENU KP ===
-function showKPMenu() {
-  return `
-    <b>🧑‍💼 Sub-Menu Kerja Praktek (KP)</b><br><br>
-    1️⃣ Syarat KP<br>
-    2️⃣ Pendaftaran KP<br>
-    3️⃣ Laporan KP<br>
-    0️⃣ Kembali ke Menu Utama<br><br>
-    <i>Ketik angka (0–3) untuk memilih.</i>
-  `;
-}
-
-
-function getBotReply(message) {
-  // ==== CEK EXIT ====
-  if (message === "exit" || message === "keluar" || message === "quit") {
-    state = "main";
-    clearChat();
-    setTimeout(() => addMessage(showMainMenu(), "bot"), 200);
-    return "Percakapan telah direset. Menampilkan kembali menu utama...";
-  }
-
-  // ==== KEMBALI ====
-  if (message === "0" || message === "back" || message === "kembali") {
-    state = "main";
-    return showMainMenu();
-  }
-
-  // ==== MODE PILIH MENU ====
- if (state === "main") {
-  if (message === "1") {
-    state = "skripsi";
-    return showSkripsiMenu();
-  } else if (message === "2") {
-    state = "kp";
-    return showKPMenu();
-  } else if (message === "3") {
-    state = "info";
-    return handleJadwal() + "\n\nKetik 0 untuk kembali ke menu utama.";
-  } else if (message === "4") {
-    state = "info";
-    return handleKontak() + "\n\nKetik 0 untuk kembali ke menu utama.";
-  } else if (message === "5") {
-    state = "info";
-    return handleLayanan() + "\n\nKetik 0 untuk kembali ke menu utama.";
+  // Struktur HTML pesan
+  if (sender === "bot") {
+    msgDiv.innerHTML = `
+      <div class="bot-avatar">🤖</div>
+      <div class="bubble">
+        ${text}
+        <div class="msg-time">${time}</div>
+      </div>
+    `;
   } else {
-    return "Pilihan tidak valid. Silakan pilih 1–5.";
+    msgDiv.innerHTML = `
+      <div class="bubble user-bubble">
+        ${text}
+        <div class="msg-time">${time}</div>
+      </div>
+    `;
   }
+
+  chatBody.appendChild(msgDiv);
+  chatBody.scrollTop = chatBody.scrollHeight;
 }
 
- if (state === "skripsi") {
-    switch (message) {
-      case "1":
-        return `
-          <b>📘 Syarat Skripsi:</b><br>
-          • Minimal 100 SKS<br>
-          • Sudah mengambil Seminar Proposal<br>
-          • Disetujui oleh Dosen Pembimbing<br><br>
-          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
-        `;
-      case "2":
-        return `
-          <b>📝 Pendaftaran Skripsi:</b><br>
-          Dilakukan melalui form fakultas dengan rekomendasi dari dosen pembimbing.<br><br>
-          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
-        `;
-      case "3":
-        return `
-          <b>👨‍🏫 Bimbingan Skripsi:</b><br>
-          • Minimal 8 kali bimbingan.<br>
-          • Dicatat dalam kartu bimbingan skripsi.<br><br>
-          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
-        `;
-      case "0":
-        state = "main";
-        return showMainMenu();
-      default:
-        return showSkripsiMenu();
-    }
-  }
 
-  // ---- SUB-MENU KP ----
-  if (state === "kp") {
-    switch (message) {
-      case "1":
-        return `
-          <b>📋 Syarat KP:</b><br>
-          • Minimal 90 SKS.<br>
-          • Sudah lulus mata kuliah pendukung.<br><br>
-          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
-        `;
-      case "2":
-        return `
-          <b>🧾 Pendaftaran KP:</b><br>
-          Isi formulir KP di fakultas dan lampirkan proposal tempat KP.<br><br>
-          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
-        `;
-      case "3":
-        return `
-          <b>📅 Laporan KP:</b><br>
-          Laporan disusun sesuai pedoman dan dikumpulkan maksimal 2 minggu setelah KP selesai.<br><br>
-          <i>Ketik angka 1-3 untuk melanjutkan kepilihan lain, 0 untuk kembali ke Pilihan Utama.</i>
-        `;
-      case "0":
-        state = "main";
-        return showMainMenu();
-      default:
-        return showKPMenu();
-    }
-  }
-
-if (state === "info") {
-    if (message === "0" || message === "back" || message === "kembali") {
-      state = "main";
-      return showMainMenu();
-    } else {
-      state = "main";
-      return `
-        <i>Kamu kembali ke menu utama.</i><br><br>
-        ${showMainMenu()}
-      `;
-    }
-  }
-
-  return showMainMenu();
+function addMenu(buttons) {
+  const div = document.createElement("div");
+  div.className = "menu-buttons";
+  div.innerHTML = buttons;
+  chatBody.appendChild(div);
+  chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-// === MENU LAINNYA ===
-function handleJadwal() {
-  return `
-    <b>📅 Jadwal Akademik</b><br>
-    Jadwal kuliah dan kalender akademik dapat dilihat di portal FTI UNSAP.<br><br>
-    <i>Ketik apa saja untuk kembali ke menu utama.</i>
+function initChat() {
+  clearChat();
+  addMessage(`Selamat datang di <strong>Chatbot Informasi Akademik FTI UNSAP</strong>! 👋<br><br>
+        Saya siap membantu Anda mendapatkan informasi seputar:<br>
+        • Jadwal Akademik<br>
+        • Kerja Praktik (KP)<br>
+        • Skripsi<br>
+        • Informasi Umum Fakultas<br><br>
+        Silakan pilih menu di bawah ini:`);
+  showMainMenu();
+}
+
+function showMainMenu() {
+  const buttons = `
+    <button class="menu-button" onclick="showSubMenu('kalender')">📅 Kalender Akademik</button>
+    <button class="menu-button" onclick="showSubMenu('krs')">🧾 KRS</button>
+    <button class="menu-button" onclick="showSubMenu('skripsi')">📘 Skripsi</button>
+    <button class="menu-button" onclick="showSubMenu('sempro')">🗣️ Seminar Proposal</button>
+    <button class="menu-button" onclick="showSubMenu('kp')">💼 Kerja Praktek (KP)</button>
+    <button class="menu-button" onclick="showSubMenu('surat')">✉️ Surat & Administrasi</button>
+    <button class="menu-button" onclick="showSubMenu('wisuda')">🎓 Wisuda</button>
+    <button class="menu-button" onclick="showSubMenu('siakad')">💻 SIAKAD</button>
+    <button class="menu-button" onclick="showSubMenu('layanan')">🏫 Layanan Fakultas</button>
   `;
+  addMenu(buttons);
 }
 
-function handleKontak() {
-  return `
-    <b>☎️ Kontak Fakultas Teknologi Informasi UNSAP</b><br>
-    • Telepon: 0878-9278-91644<br>
-    • Email: fti@unsap.ac.id<br>
-    • Alamat: Jl. Pahlawan No. 1, Sumedang, Jawa Barat<br>
-    • Jam Layanan: Senin–Jumat, 08.00–16.00 WIB<br><br>
-    <i>Ketik apa saja untuk kembali ke menu utama.</i>
-  `;
+
+function showSubMenu(type) {
+  if (type === "kalender") {
+    addMessage("📅 Kalender Akademik");
+    addMessage(`
+      • UTS: Minggu ke-8 semester berjalan<br>
+      • UAS: Minggu ke-16 semester berjalan<br>
+      • Libur semester: sesuai pengumuman fakultas.
+    `);
+    addMenu(`<button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>`);
+
+  } else if (type === "krs") {
+    addMessage("🧾 Informasi KRS (Kartu Rencana Studi)");
+    addMessage(`
+      • Pengisian KRS dilakukan di portal SIAKAD pada awal semester.<br>
+      • Pastikan sudah melakukan konsultasi dengan dosen pembimbing akademik.<br>
+      • Perubahan KRS hanya bisa dilakukan pada masa perbaikan KRS.
+    `);
+    addMenu(`<button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>`);
+
+  } else if (type === "skripsi") {
+    addMessage("📚 Informasi Skripsi");
+    addMenu(`
+      <button class="menu-button" onclick="showContent('Syarat Skripsi', 'Minimal 120 SKS, IPK ≥ 2.00, dan sudah menyelesaikan KP.')">Syarat Skripsi</button>
+      <button class="menu-button" onclick="showContent('Pendaftaran Skripsi', 'Isi formulir pendaftaran di fakultas dengan rekomendasi dosen pembimbing.')">Pendaftaran Skripsi</button>
+      <button class="menu-button" onclick="showContent('Bimbingan Skripsi', 'Minimal 8 kali bimbingan dengan dosen pembimbing dan dicatat di kartu bimbingan.')">Bimbingan Skripsi</button>
+      <button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>
+    `);
+
+  } else if (type === "sempro") {
+    addMessage("🗣️ Seminar Proposal (Sempro)");
+    addMessage(`
+      • Mahasiswa wajib menyelesaikan proposal dan disetujui pembimbing sebelum daftar sempro.<br>
+      • Jadwal dan ruangan ditentukan oleh bagian akademik.<br>
+      • Pakaian formal dan sopan wajib saat presentasi.
+    `);
+    addMenu(`<button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>`);
+
+  } else if (type === "kp") {
+    addMessage("💼 Informasi Kerja Praktek (KP)");
+    addMenu(`
+      <button class="menu-button" onclick="showContent('Syarat KP', 'Minimal 90 SKS dan sudah lulus mata kuliah pendukung.')">Syarat KP</button>
+      <button class="menu-button" onclick="showContent('Pendaftaran KP', 'Isi formulir KP di fakultas dan lampirkan proposal tempat KP.')">Pendaftaran KP</button>
+      <button class="menu-button" onclick="showContent('Laporan KP', 'Laporan diserahkan maksimal 2 minggu setelah KP selesai.')">Laporan KP</button>
+      <button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>
+    `);
+
+  } else if (type === "surat") {
+    addMessage("✉️ Surat & Administrasi Fakultas");
+    addMessage(`
+      • Surat keterangan aktif kuliah<br>
+      • Surat izin penelitian<br>
+      • Surat rekomendasi KP / Skripsi<br><br>
+      Pengajuan dilakukan di bagian akademik dengan membawa KTM & bukti pembayaran UKT.
+    `);
+    addMenu(`<button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>`);
+
+  } else if (type === "wisuda") {
+    addMessage("🎓 Informasi Wisuda");
+    addMessage(`
+      • Wisuda dilaksanakan 2 kali dalam setahun (Genap & Ganjil).<br>
+      • Pendaftaran dilakukan setelah mahasiswa dinyatakan lulus sidang skripsi.<br>
+      • Kelengkapan berkas: ijazah sementara, transkrip nilai, dan bukti pembayaran.
+    `);
+    addMenu(`<button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>`);
+
+  } else if (type === "siakad") {
+    addMessage("💻 Sistem Informasi Akademik (SIAKAD)");
+    addMessage(`
+      • Digunakan untuk pengisian KRS, melihat nilai, dan mencetak KHS.<br>
+      • Akses melalui portal <b>siakad.unsap.ac.id</b> menggunakan NIM dan password.<br>
+      • Jika lupa password, hubungi bagian IT Support fakultas.
+    `);
+    addMenu(`<button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>`);
+
+  } else if (type === "layanan") {
+    addMessage("🏫 Layanan Fakultas");
+    addMessage(`
+      • Layanan Akademik: KRS, KHS, Transkrip Nilai<br>
+      • Layanan KP & Skripsi<br>
+      • Layanan IT Support & Kemahasiswaan<br>
+      • Jam Layanan: Senin–Jumat, 08.00–16.00 WIB
+    `);
+    addMenu(`<button class="menu-button" onclick="showMainMenu()">⬅️ Kembali</button>`);
+  }
 }
 
-function handleLayanan() {
-  return `
-    <b>🕐 Layanan Fakultas</b><br>
-    • Layanan Akademik: KRS, KHS, Transkrip Nilai<br>
-    • Layanan KP & Skripsi<br>
-    • Layanan IT Support & Kemahasiswaan<br><br>
-    Jam Operasional: Senin–Jumat, 08.00–16.00 WIB<br><br>
-    <i>Ketik apa saja untuk kembali ke menu utama.</i>
-  `;
+
+
+function showContent(title, text) {
+  addMessage(`📄 <b>${title}</b><br>${text}`);
+  addMenu(`<button class="menu-button" onclick="showMainMenu()">🏠 Menu Utama</button>`);
 }
 
-// === RESET CHATBOX ===
 function clearChat() {
-  chatBox.innerHTML = "";
+  chatBody.innerHTML = "";
 }
+
+// === EVENT LISTENER ===
+// Reset = hapus chat dan kembali ke menu utama
+resetBtn.addEventListener("click", () => {
+  clearChat();
+  addMessage("🔄 Chat anda telah di-reset."); // 👉 pesan tambahan
+  setTimeout(initChat, 400); // delay biar pesan muncul dulu
+});
+
+// Home = hanya kembali ke menu utama tanpa hapus chat
+homeBtn.addEventListener("click", () => {
+  addMessage("🏠 Kembali ke menu utama:");
+  showMainMenu();
+});
 
 // === MULAI ===
-window.onload = () => {
-  addMessage(showMainMenu(), "bot");
-};
+window.onload = initChat;

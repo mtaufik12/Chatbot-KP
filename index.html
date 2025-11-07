@@ -1,45 +1,48 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chatbot Akademik FTI UNSAP</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website Akademik FTI UNSAP</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <header>
     <h1>Selamat Datang di Website Akademik FTI UNSAP</h1>
     <p>Gunakan chatbot di kanan bawah untuk menanyakan informasi akademik.</p>
   </header>
 
   <main>
-    <section class="content">
+    <section class="info-section">
       <h2>Informasi Umum</h2>
-      <p>Website ini menyediakan layanan informasi akademik berbasis chatbot, seperti jadwal kuliah, prosedur KP, dan pendaftaran skripsi.</p>
+      <p>
+        Website ini menyediakan layanan informasi akademik berbasis chatbot,
+        seperti jadwal kuliah, prosedur KP, dan pendaftaran skripsi.
+      </p>
     </section>
   </main>
-  <!-- Chatbot -->
-  <div class="chat-container" id="chat-container">
-    <div class="chat-header">Chatbot Akademik 🤖</div>
-    <div class="chat-box" id="chat-box"></div>
-    <div class="chat-input">
-      <input type="text" id="user-input" placeholder="Tulis pertanyaan di sini..." />
-      <button id="send-btn">Kirim</button>
-    </div>
-  </div> 
+
+  <!-- Tombol Pop-up Chat -->
+  <button class="chat-toggle" id="chatToggle">💬</button>
+
+  <!-- Chatbot Box -->
+ <div class="chatbot-box" id="chatbotBox">
+  <!-- Header -->
+  <div class="chat-header">
+    Chatbot Akademik 🤖
+    <button id="closeBtn" class="close-btn">❌</button>
+  </div>
+
+  <!-- Body -->
+  <div class="chat-body" id="chatBody"></div>
+
+  <!-- Footer (Tombol di bawah) -->
+  <div class="chat-footer">
+    <button id="homeBtn" class="footer-btn">🏠 Home</button>
+    <button id="resetBtn" class="footer-btn reset">🔄 Reset</button>
+  </div>
+</div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
-<!-- <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-<df-messenger
-  intent="WELCOME"
-  chat-title="KuliahBot"
-  agent-id=""
-  language-code="id"
-  chat-icon="https://upload.wikimedia.org/wikipedia/commons/7/7e/Robot_icon.png"
-  background-color="#8775bf"
-  text-color="#000000"
-></df-messenger> -->

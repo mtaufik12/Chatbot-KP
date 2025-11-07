@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot FTI UNSAP - Hybrid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 450px;
+            height: 700px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .chat-header h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .bot-avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 15px;
+            max-width: 75%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .menu-button {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .menu-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-reply {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            color: #333;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .quick-reply:hover {
+            background: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        .chat-input-container {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .chat-input-box input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input-box input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            flex: 1;
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            background: #e0e0e0;
+        }
+
+        .info-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .info-text strong {
+            color: #667eea;
+            display: block;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+
+        .timestamp {
+            font-size: 10px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .detail-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .detail-button:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>🎓 Chatbot FTI UNSAP</h2>
+            <p>Ketik pertanyaan atau pilih menu</p>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages akan ditampilkan di sini -->
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="chat-input-box">
+                <input type="text" id="userInput" placeholder="Ketik pertanyaan..." onkeypress="handleEnter(event)">
+                <button class="send-button" onclick="sendMessage()">📤</button>
+            </div>
+            <div class="action-buttons">
+                <button class="action-button" onclick="showMainMenu()">🏠 Menu</button>
+                <button class="action-button" onclick="resetChat()">🔄 Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Knowledge Base (Simplified)
+        const knowledgeBase = {
+            caraIsiKRS: {
+                title: "📝 Cara Isi KRS Online",
+                summary: "Berikut langkah isi KRS: 1) Login SIAKAD, 2) Menu Akademik → KRS, 3) Pilih mata kuliah, 4) Simpan & cetak.",
+                content: `<div class="info-text">
+                    <strong>Langkah-langkah Isi KRS Online:</strong>
+                    1. Login ke siakad.unsap.ac.id<br>
+                    2. Menu Akademik → KRS<br>
+                    3. Pilih semester aktif<br>
+                    4. Klik "Tambah Mata Kuliah"<br>
+                    5. Pilih mata kuliah yang tersedia<br>
+                    6. Perhatikan jadwal bentrok<br>
+                    7. Simpan dan cetak KRS<br><br>
+                    <strong>Batas SKS:</strong><br>
+                    • IPK ≥ 3.00: Max 24 SKS<br>
+                    • IPK 2.50-2.99: Max 21 SKS<br>
+                    • IPK < 2.50: Max 18 SKS
+                </div>`
+            },
+            jadwalKRS: {
+                title: "📅 Jadwal KRS Online",
+                summary: "Jadwal KRS Semester Genap: 1-10 Februari 2025 (KRS Reguler), 17-24 Februari 2025 (KRS Perubahan).",
+                content: `<div class="info-text">
+                    <strong>Jadwal KRS Semester Genap 2024/2025:</strong>
+                    • KRS Reguler: 1-10 Februari 2025<br>
+                    • KRS Perubahan: 17-24 Februari 2025<br><br>
+                    <strong>Jadwal KRS Semester Ganjil 2025:</strong>
+                    • KRS Reguler: 18-27 Agustus 2025<br>
+                    • KRS Perubahan: 1-8 September 2025<br><br>
+                    <em>Mahasiswa yang tidak isi KRS = Cuti Akademik</em>
+                </div>`
+            },
+            syaratKP: {
+                title: "✅ Syarat Kerja Praktik",
+                summary: "Syarat KP: Minimal 100 SKS, IPK min 2.00, lulus mata kuliah prasyarat, tidak ada tunggakan.",
+                content: `<div class="info-text">
+                    <strong>Persyaratan KP:</strong>
+                    <strong>1. Syarat Akademik:</strong><br>
+                    • Minimal 100 SKS<br>
+                    • IPK minimal 2.00<br>
+                    • Lulus mata kuliah prasyarat<br>
+                    • Tidak ada tunggakan UKT<br><br>
+                    <strong>2. Syarat Administrasi:</strong><br>
+                    • Formulir pendaftaran KP<br>
+                    • Transkrip nilai sementara<br>
+                    • Proposal tempat KP<br>
+                    • Surat persetujuan perusahaan
+                </div>`
+            },
+            kpDiPerusahaanSendiri: {
+                title: "🏢 KP di Perusahaan Sendiri",
+                summary: "BOLEH, dengan syarat: perusahaan punya legalitas, ada pembimbing lapangan, job desk jelas, dan perlu persetujuan koordinator.",
+                content: `<div class"info-text">
+                    <strong>KP di Perusahaan Sendiri: BOLEH</strong><br><br>
+                    <strong>Syarat:</strong><br>
+                    • Perusahaan punya legalitas (SIUP/NIB)<br>
+                    • Bergerak di bidang IT<br>
+                    • Ada pembimbing lapangan (bukan diri sendiri)<br>
+                    • Job desk jelas dan terukur<br>
+                    • Perlu persetujuan Koordinator KP<br><br>
+                    <strong>Kontak Koordinator KP:</strong><br>
+                    Agus Setiawan, M.Kom<br>
+                    WA: 0812-3456-7890
+                </div>`
+            },
+            ajukanPembimbing: {
+                title: "👨‍🏫 Ajukan Pembimbing Skripsi",
+                summary: "Setelah lulus sempro, ajukan via portal SIAKAD atau ke Koordinator Skripsi. Proses 7-14 hari kerja.",
+                content: `<div class="info-text">
+                    <strong>Cara Ajukan Pembimbing:</strong>
+                    1. Pastikan sudah lulus Sempro<br>
+                    2. Isi formulir pengajuan<br>
+                    3. Ajukan ke Koordinator Skripsi<br>
+                    4. Atau via siakad.unsap.ac.id<br><br>
+                    <strong>Proses:</strong><br>
+                    • Koordinator tentukan pembimbing 1 & 2<br>
+                    • SK diterbitkan dalam 1 minggu<br>
+                    • Mahasiswa dihubungi via email<br><br>
+                    <strong>Kontak:</strong><br>
+                    Dr. Maya Sari, M.T<br>
+                    koordinator.skripsi@fti.unsap.ac.id
+                </div>`
+            },
+            syaratSempro: {
+                title: "✅ Syarat Seminar Proposal",
+                summary: "Syarat: Min 120 SKS, IPK 2.00, lulus KP, proposal 15 hal (BAB I-III), TOEFL skor 400.",
+                content: `<div class="info-text">
+                    <strong>Persyaratan Sempro:</strong>
+                    <strong>1. Akademik:</strong><br>
+                    • Minimal 120 SKS<br>
+                    • IPK minimal 2.00<br>
+                    • Lulus KP<br>
+                    • Tidak ada nilai D/E<br><br>
+                    <strong>2. Administrasi:</strong><br>
+                    • Proposal (3 rangkap, dijilid)<br>
+                    • Transkrip nilai<br>
+                    • Sertifikat TOEFL (skor 400)<br>
+                    • Bukti bayar biaya sempro
+                </div>`
+            },
+            biayaSempro: {
+                title: "💰 Biaya Seminar Proposal",
+                summary: "Biaya Sempro: Rp 400.000 (administrasi Rp 250.000 + konsumsi Rp 150.000). Bayar via transfer atau kasir kampus.",
+                content: `<div class="info-text">
+                    <strong>Rincian Biaya Sempro:</strong>
+                    • Administrasi: Rp 250.000<br>
+                    • Konsumsi: Rp 150.000<br>
+                    • Total: Rp 400.000<br><br>
+                    <strong>Cara Bayar:</strong><br>
+                    • Transfer: BNI/BRI/Mandiri (lihat portal)<br>
+                    • Kasir kampus (08.00-15.00)<br><br>
+                    <em>Jika tidak lulus: biaya ulang Rp 200.000</em>
+                </div>`
+            },
+            suratAktifKuliah: {
+                title: "📄 Surat Aktif Kuliah",
+                summary: "Cara: Login SIAKAD → Layanan → Surat Keterangan → Download PDF. Atau datang ke TU (1-2 hari). GRATIS.",
+                content: `<div class="info-text">
+                    <strong>Cara Online (Rekomendasi):</strong>
+                    1. Login siakad.unsap.ac.id<br>
+                    2. Menu: Layanan → Surat Keterangan<br>
+                    3. Pilih "Surat Aktif Kuliah"<br>
+                    4. Isi tujuan surat<br>
+                    5. Download PDF (1-2 hari)<br><br>
+                    <strong>Cara Offline:</strong><br>
+                    Datang ke TU FTI dengan KTM<br><br>
+                    <strong>Biaya: GRATIS</strong><br>
+                    Urgent (hari itu juga): Rp 25.000
+                </div>`
+            },
+            lupaPasswordSIAKAD: {
+                title: "🔐 Lupa Password SIAKAD",
+                summary: "Reset via: 1) siakad.unsap.ac.id → Lupa Password, 2) Datang ke TU dengan KTM, 3) WA admin: 0812-3456-7893",
+                content: `<div class="info-text">
+                    <strong>3 Cara Reset Password:</strong>
+                    <strong>1. Self-Service:</strong><br>
+                    • Buka siakad.unsap.ac.id<br>
+                    • Klik "Lupa Password"<br>
+                    • Masukkan NIM & email<br>
+                    • Cek email → Reset password<br><br>
+                    <strong>2. Via TU:</strong><br>
+                    Datang dengan KTM, isi form<br><br>
+                    <strong>3. Via WhatsApp:</strong><br>
+                    Hubungi: 0812-3456-7893<br>
+                    Kirim: NIM + Nama + Foto KTM
+                </div>`
+            },
+            jamLayananTU: {
+                title: "🕐 Jam Layanan TU FTI",
+                summary: "Senin-Kamis: 08.00-16.00, Jumat: 08.00-16.30, Sabtu: 08.00-13.00. Kontak: (0274) 555-0002 atau WA 0812-3456-7892",
+                content: `<div class="info-text">
+                    <strong>Jam Operasional TU FTI:</strong>
+                    • Senin - Kamis: 08.00 - 16.00 WIB<br>
+                    • Jumat: 08.00 - 16.30 WIB<br>
+                    • Sabtu: 08.00 - 13.00 WIB<br>
+                    • Minggu & Libur: TUTUP<br><br>
+                    <strong>Kontak:</strong><br>
+                    • Telp: (0274) 555-0002<br>
+                    • WA: 0812-3456-7892<br>
+                    • Email: tu.fti@unsap.ac.id
+                </div>`
+            }
+        };
+
+        // Keyword Mapping untuk Natural Language Processing
+        const keywordMapping = {
+            // KRS
+            'krs': ['caraIsiKRS', 'jadwalKRS'],
+            'isi krs': ['caraIsiKRS'],
+            'cara isi krs': ['caraIsiKRS'],
+            'cara mengisi krs': ['caraIsiKRS'],
+            'jadwal krs': ['jadwalKRS'],
+            'kapan krs': ['jadwalKRS'],
+            'krs online': ['caraIsiKRS', 'jadwalKRS'],
+            
+            // KP
+            'kp': ['syaratKP', 'kpDiPerusahaanSendiri'],
+            'syarat kp': ['syaratKP'],
+            'kerja praktik': ['syaratKP'],
+            'perusahaan sendiri': ['kpDiPerusahaanSendiri'],
+            'kp sendiri': ['kpDiPerusahaanSendiri'],
+            'kp di perusahaan sendiri': ['kpDiPerusahaanSendiri'],
+            
+            // Skripsi
+            'skripsi': ['ajukanPembimbing'],
+            'pembimbing': ['ajukanPembimbing'],
+            'ajukan pembimbing': ['ajukanPembimbing'],
+            'cara ajukan pembimbing': ['ajukanPembimbing'],
+            'bimbingan skripsi': ['ajukanPembimbing'],
+            
+            // Sempro
+            'sempro': ['syaratSempro', 'biayaSempro'],
+            'seminar proposal': ['syaratSempro', 'biayaSempro'],
+            'syarat sempro': ['syaratSempro'],
+            'biaya sempro': ['biayaSempro'],
+            'biaya seminar proposal': ['biayaSempro'],
+            
+            // Surat
+            'surat': ['suratAktifKuliah'],
+            'surat aktif': ['suratAktifKuliah'],
+            'aktif kuliah': ['suratAktifKuliah'],
+            'surat keterangan': ['suratAktifKuliah'],
+            
+            // SIAKAD
+            'siakad': ['lupaPasswordSIAKAD'],
+            'password': ['lupaPasswordSIAKAD'],
+            'lupa password': ['lupaPasswordSIAKAD'],
+            'reset password': ['lupaPasswordSIAKAD'],
+            'lupa kata sandi': ['lupaPasswordSIAKAD'],
+            
+            // Jam Layanan
+            'jam': ['jamLayananTU'],
+            'jam layanan': ['jamLayananTU'],
+            'jam tu': ['jamLayananTU'],
+            'jam buka': ['jamLayananTU'],
+            'jam operasional': ['jamLayananTU']
+        };
+
+        // Main Menu Structure
+        const mainMenus = [
+            { id: 'krs', icon: '📝', label: 'KRS', keys: ['caraIsiKRS', 'jadwalKRS'] },
+            { id: 'kp', icon: '💼', label: 'Kerja Praktik', keys: ['syaratKP', 'kpDiPerusahaanSendiri'] },
+            { id: 'skripsi', icon: '📚', label: 'Skripsi', keys: ['ajukanPembimbing'] },
+            { id: 'sempro', icon: '🎤', label: 'Sempro', keys: ['syaratSempro', 'biayaSempro'] },
+            { id: 'surat', icon: '📄', label: 'Surat', keys: ['suratAktifKuliah'] },
+            { id: 'siakad', icon: '💻', label: 'SIAKAD', keys: ['lupaPasswordSIAKAD'] }
+        ];
+
+        // State management
+        let conversationHistory = [];
+
+        // Initialize chat
+        function initChat() {
+            showWelcomeMessage();
+        }
+
+        function showWelcomeMessage() {
+            const welcomeMsg = `Selamat datang di <strong>Chatbot FTI UNSAP</strong>! 👋<br><br>
+                Saya bisa membantu Anda dengan:<br>
+                • Informasi KRS & Jadwal<br>
+                • Kerja Praktik (KP)<br>
+                • Skripsi & Sempro<br>
+                • Surat-menyurat<br>
+                • SIAKAD & lainnya<br><br>
+                💬 Silakan <strong>ketik pertanyaan</strong> atau <strong>pilih menu</strong> di bawah:`;
+            
+            addBotMessage(welcomeMsg);
+            showMainMenu();
+        }
+
+        function showMainMenu() {
+            let menuHTML = '<div class="menu-buttons">';
+            mainMenus.forEach(menu => {
+                menuHTML += `<button class="menu-button" onclick="showMenuCategory('${menu.id}')">
+                    ${menu.icon} ${menu.label}
+                </button>`;
+            });
+            menuHTML += '</div>';
+            
+            addBotMessage(menuHTML, true);
+            
+            // Add quick replies
+            const quickReplies = `
+                <div class="quick-replies">
+                    <span class="quick-reply" onclick="sendQuickReply('bagaimana cara isi krs')">Cara isi KRS?</span>
+                    <span class="quick-reply" onclick="sendQuickReply('syarat kp')">Syarat KP?</span>
+                    <span class="quick-reply" onclick="sendQuickReply('lupa password siakad')">Lupa password</span>
+                    <span class="quick-reply" onclick="sendQuickReply('jam layanan tu')">Jam layanan</span>
+                </div>
+            `;
+            addBotMessage(quickReplies, true);
+        }
+
+        function showMenuCategory(categoryId) {
+            const menu = mainMenus.find(m => m.id === categoryId);
+            if (!menu) return;
+            
+            addUserMessage(`${menu.icon} ${menu.label}`);
+            
+            let buttonsHTML = `Pilih informasi yang Anda butuhkan:<br><br><div class="menu-buttons">`;
+            menu.keys.forEach(key => {
+                const item = knowledgeBase[key];
+                if (item) {
+                    buttonsHTML += `<button class="menu-button" onclick="showContent('${key}')">
+                        ${item.title}
+                    </button>`;
+                }
+            });
+            buttonsHTML += '</div>';
+            
+            addBotMessage(buttonsHTML, true);
+        }
+
+        function showContent(contentKey, fromSearch = false) {
+            const content = knowledgeBase[contentKey];
+            if (!content) return;
+            
+            if (!fromSearch) {
+                addUserMessage(content.title);
+            }
+            
+            // Show summary first
+            addBotMessage(content.summary);
+            
+            // Show detail button
+            const detailBtn = `<button class="detail-button" onclick="showDetailContent('${contentKey}')">
+                📖 Lihat Detail Lengkap
+            </button>`;
+            addBotMessage(detailBtn, true);
+            
+            // Show related quick replies
+            showRelatedQuestions(contentKey);
+        }
+
+        function showDetailContent(contentKey) {
+            const content = knowledgeBase[contentKey];
+            if (!content) return;
+            
+            addBotMessage(content.content);
+            
+            const backButtons = `
+                <div class="menu-buttons">
+                    <button class="menu-button" onclick="showMainMenu()">🏠 Menu Utama</button>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                addBotMessage(backButtons, true);
+            }, 300);
+        }
+
+        function showRelatedQuestions(currentKey) {
+            const related = {
+                'caraIsiKRS': [
+                    { text: 'Jadwal KRS', key: 'jadwalKRS' }
+                ],
+                'jadwalKRS': [
+                    { text: 'Cara isi KRS', key: 'caraIsiKRS' }
+                ],
+                'syaratKP': [
+                    { text: 'KP di perusahaan sendiri?', key: 'kpDiPerusahaanSendiri' }
+                ],
+                'syaratSempro': [
+                    { text: 'Biaya sempro', key: 'biayaSempro' }
+                ],
+                'biayaSempro': [
+                    { text: 'Syarat sempro', key: 'syaratSempro' }
+                ]
+            };
+            
+            if (related[currentKey]) {
+                let html = '<br>💡 Pertanyaan terkait:<br><div class="quick-replies">';
+                related[currentKey].forEach(item => {
+                    html += `<span class="quick-reply" onclick="showContent('${item.key}', true)">${item.text}</span>`;
+                });
+                html += '</div>';
+                addBotMessage(html, true);
+            }
+        }
+
+        // Process user input
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            
+            if (message === '') return;
+            
+            addUserMessage(message);
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Process after delay
+            setTimeout(() => {
+                removeTypingIndicator();
+                processUserMessage(message);
+            }, 800);
+        }
+
+        function sendQuickReply(message) {
+            addUserMessage(message);
+            
+            showTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator();
+                processUserMessage(message);
+            }, 800);
+        }
+
+        function processUserMessage(message) {
+            const normalized = message.toLowerCase().trim();
+            const matches = findMatches(normalized);
+            
+            if (matches.length === 0) {
+                // No match found
+                showNotFoundResponse(message);
+            } else if (matches.length === 1) {
+                // Single match - show directly
+                showContent(matches[0], true);
+            } else {
+                // Multiple matches - show options
+                showMultipleOptions(matches);
+            }
+        }
+
+        function findMatches(input) {
+            let matches = [];
+            
+            // Check exact match
+            if (keywordMapping[input]) {
+                matches = keywordMapping[input];
+            } else {
+                // Check partial match
+                for (let keyword in keywordMapping) {
+                    if (input.includes(keyword) || keyword.includes(input)) {
+                        matches.push(...keywordMapping[keyword]);
+                    }
+                }
+            }
+            
+            // Remove duplicates
+            return [...new Set(matches)];
+        }
+
+        function showMultipleOptions(matches) {
+            let html = '🤖 Saya menemukan beberapa topik yang mungkin Anda maksud:<br><br><div class="menu-buttons">';
+            
+            matches.forEach(key => {
+                const item = knowledgeBase[key];
+                if (item) {
+                    html += `<button class="menu-button" onclick="showContent('${key}', true)">
+                        ${item.title}
+                    </button>`;
+                }
+            });
+            
+            html += '</div>';
+            addBotMessage(html, true);
+        }
+
+        function showNotFoundResponse(query) {
+            const response = `
+                🤖 Maaf, saya belum bisa menjawab pertanyaan tentang:<br>
+                <em>"${query}"</em><br><br>
+                💡 <strong>Coba kata kunci seperti:</strong><br>
+                • "KRS" atau "cara isi krs"<br>
+                • "KP" atau "syarat kp"<br>
+                • "skripsi" atau "pembimbing"<br>
+                • "sempro" atau "biaya sempro"<br>
+                • "siakad" atau "lupa password"<br>
+                • "jam layanan"<br><br>
+                Atau pilih dari menu:
+            `;
+            
+            addBotMessage(response);
+            
+            setTimeout(() => {
+                const buttons = `
+                    <div class="menu-buttons">
+                        <button class="menu-button" onclick="showMainMenu()">🏠 Menu Utama</button>
+                    </div>
+                `;
+                addBotMessage(buttons, true);
+            }, 300);
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typing = document.createElement('div');
+            typing.className = 'message bot';
+            typing.id = 'typingIndicator';
+            typing.innerHTML = `
+                <div class="bot-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typing);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) {
+                typing.remove();
+            }
+        }
+
+        function addBotMessage(content, isButton = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot';
+            
+            if (isButton) {
+                messageDiv.innerHTML = `
+                    <div class="bot-avatar">🤖</div>
+                    <div style="max-width: 85%;">
+                        ${content}
+                    </div>
+                `;
+            } else {
+                const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                messageDiv.innerHTML = `
+                    <div class="bot-avatar">🤖</div>
+                    <div class="message-content">
+                        ${content}
+                        <div class="timestamp">${timestamp}</div>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function addUserMessage(content) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user';
+            
+            const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    ${content}
+                    <div class="timestamp">${timestamp}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function resetChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            conversationHistory = [];
+            document.getElementById('userInput').value = '';
+            initChat();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initChat();
+        };
+    </script>
+</body>
+</html>
