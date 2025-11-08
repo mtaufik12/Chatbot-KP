@@ -1,0 +1,104 @@
+{
+  "kalender": [
+    {
+      "question": "Kapan kalender akademik FTI?",
+      "answer": "Kalender akademik FTI biasanya diterbitkan setiap 2 bulan setelah UAS dilaksanakan oleh pihak universitas."
+    },
+    {
+      "question": "Kapan mulai kuliah semester depan?",
+      "answer": "Perkuliahan semester depan biasanya dimulai sekitar awal Februari untuk semester genap dan awal September untuk semester ganjil. Namun, tanggal pastinya menyesuaikan kalender akademik yang diterbitkan universitas."
+    }
+  ],
+  "krs": [
+    {
+      "question": "Bagaimana cara isi KRS?",
+      "answer": "Pengisian KRS dilakukan secara online melalui portal SIAKAD UNSAP. Langkah-langkah: Login ke SIAKAD, pilih menu Perkuliahan → KRS Online → pilih mata kuliah sesuai semester → simpan."
+    },
+    {
+      "question": "Kapan jadwal KRS online?",
+      "answer": "Jadwal pengisian KRS dibuka 1–2 minggu sebelum perkuliahan dimulai. Info resmi diumumkan lewat website, papan pengumuman, atau grup WhatsApp fakultas."
+    }
+  ],
+  "skripsi": [
+    {
+      "question": "Apa syarat untuk mendaftar skripsi?",
+      "answer": "Syarat: Minimal 140 SKS, IPK ≥ 2.5, lulus semua mata kuliah tanpa nilai D/E, dan memiliki SK Skripsi aktif."
+    },
+    {
+      "question": "Bagaimana pelaksanaan skripsi?",
+      "answer": "Skripsi dilaksanakan satu semester, mulai dari pembuatan SK Skripsi hingga Sidang Yudisium, meliputi bimbingan, sidang skripsi, dan yudisium."
+    },
+    {
+      "question": "Bagaimana alur pelaksanaan skripsi?",
+      "answer": "Mahasiswa perwalian MK Skripsi di SIAKAD → kumpulkan proposal → dapat SK Pembimbing → bimbingan 4 bulan hingga selesai."
+    }
+  ],
+  "sempro": [
+    {
+      "question": "Apa syarat mengikuti seminar proposal?",
+      "answer": "Syarat: Minimal 123 SKS, IPK ≥ 2.5, lulus semua mata kuliah, dan memiliki SK Skripsi aktif."
+    },
+    {
+      "question": "Berapa biaya seminar proposal?",
+      "answer": "Biaya seminar proposal tergantung kebijakan fakultas. Dapat dikonfirmasi ke bagian administrasi TU FTI."
+    }
+  ],
+  "kp": [
+    {
+      "question": "Syarat KP apa saja?",
+      "answer": "Mahasiswa aktif, minimal semester 6, lulus 80% SKS, IPK ≥ 2.00, dan mengambil MK KP di semester berjalan."
+    },
+    {
+      "question": "Boleh KP di perusahaan sendiri?",
+      "answer": "Boleh, asalkan bidangnya relevan dengan program studi dan tetap mengajukan surat izin KP melalui fakultas."
+    }
+  ],
+  "surat": [
+    {
+      "question": "Bagaimana minta surat aktif kuliah?",
+      "answer": "Isi formulir di staf BAUM. Jika untuk perusahaan/dinas, sertakan SK orang tua."
+    },
+    {
+      "question": "Bagaimana cara mengajukan cuti kuliah?",
+      "answer": "Syarat: Lunas SPP terakhir, isi formulir cuti di BAUM, lampirkan KHS terakhir."
+    },
+    {
+      "question": "Bagaimana prosedur mengurus surat pindah kuliah?",
+      "answer": "Isi formulir di BAUM, sertakan transkrip, KTM, dan bukti pembayaran terakhir."
+    }
+  ],
+  "wisuda": [
+    {
+      "question": "Syarat ikut yudisium apa?",
+      "answer": "Sudah lulus seluruh MK dan skripsi, tidak memiliki tunggakan, menyerahkan berkas kelulusan, dan publikasi ilmiah."
+    },
+    {
+      "question": "Berapa biaya wisuda?",
+      "answer": "Biaya wisuda diumumkan menjelang jadwal wisuda dan bisa berbeda tiap periode."
+    },
+    {
+      "question": "Kapan jadwal wisuda?",
+      "answer": "Wisuda dilaksanakan satu kali setahun. Jadwal diumumkan di website atau media sosial universitas."
+    }
+  ],
+  "layanan": [
+    {
+      "question": "Jam layanan TU FTI sampai jam berapa?",
+      "answer": "Jam operasional: Senin–Jumat, 08.30 – 15.30 WIB (istirahat 11.30 – 13.00)."
+    }
+  ],
+  "siakad": [
+    {
+      "question": "Saya lupa password SIAKAD, gimana?",
+      "answer": "Kirim NIM dan nama ke CS BAAK FTI (0823-1948-9504)."
+    },
+    {
+      "question": "Bagaimana cara mencetak KRS atau KHS?",
+      "answer": "Login ke SIAKAD → menu Laporan → pilih KRS/KHS → tampilkan laporan → cetak."
+    },
+    {
+      "question": "Apa yang bisa dilakukan di portal akademik?",
+      "answer": "Mahasiswa bisa mengisi & mencetak KRS/KHS, lihat jadwal & nilai, cek pembayaran, dan lihat transkrip."
+    }
+  ]
+}
